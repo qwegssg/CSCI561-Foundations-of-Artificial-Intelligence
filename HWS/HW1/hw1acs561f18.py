@@ -10,6 +10,6 @@ with open("input.txt") as input_file:
                 output_file.write("Right")
             elif data[0] == "B":
                 output_file.write("Left")
-            if counter != (len(lines))-1:
+            if counter != len(lines) - 1:
                 output_file.write("\n")
-                counter++
+                counter += 1
