@@ -1,21 +1,25 @@
 class SolveScooters:
 
     def create_areas(self, n):
-        graph = []
+        # result is a list of lists, if existing
+        result = []
         visited_area = {
             'col': set(),
             'sum': set(),
             'diff': set(),
         }
-        self.dfs(n, [], visited_area, graph)
-        return graph
+        self.dfs(n, [], visited_area, result)
+        return result
+        # return len(result)
 
-    def dfs(self, n, permutation, visited_area, graph):
+    # the fun part
+    def dfs(self, n, permutation, visited_area, result):
         if len(permutation) == n:
-            graph.append(self.construct_graph(permutation))
+            result.append(self.construct_graph(permutation))
             return
 
         row = len(permutation)
+        # check every column in one level (one row)
         for col in range(n):
             if not self.check_valid(permutation, visited_area, col):
                 continue
@@ -24,7 +28,8 @@ class SolveScooters:
             visited_area['sum'].add(row + col)
             visited_area['diff'].add(row - col)
 
-            self.dfs(n, permutation, visited_area, graph)
+            self.dfs(n, permutation, visited_area, result)
+            # backtracking! return to the father node above to try other child nodes
             visited_area['col'].remove(col)
             visited_area['sum'].remove(row + col)
             visited_area['diff'].remove(row - col)
@@ -41,6 +46,7 @@ class SolveScooters:
             return False
         return True
 
+    # every graph is a list
     def construct_graph(self, permutation):
         graph = []
         n = len(permutation)
@@ -48,7 +54,6 @@ class SolveScooters:
             row_string = ''.join(['p' if c == col else '.' for c in range(n)])
             graph.append(row_string)
         return graph
-
 
 
 solution = SolveScooters()
