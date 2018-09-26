@@ -63,7 +63,7 @@ class SolveScooters:
             return True
 
 
-with open("input.txt") as input_file:
+with open("input3.txt") as input_file:
     lines = input_file.read().splitlines()
     size = int(lines.pop(0))
     nums = int(lines.pop(0))
