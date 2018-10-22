@@ -4,26 +4,19 @@ class Efficiency:
         # set a flag to determine the next organization, at first, it is spla's turn
         is_spla = True
         chosen_list = []
+        self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list)
 
-        # newwww
-        best_pair = self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, [curr_spla, curr_lahsa])
-        print(best_pair)
-
-    def max_efficiency(self, app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, best_pair):
+    def max_efficiency(self, app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list):
 
         # if there is no more candidates can be picked
         if self.is_over(app_list, chosen_list):
             print(chosen_list)
-            # print(curr_spla)
-            # print(curr_lahsa)
-
-            # newwww
-            return [curr_spla, curr_lahsa], curr_spla, curr_lahsa
-            # return
+            print(curr_spla)
+            print(curr_lahsa)
+            return
 
         # SPLA's turn:
         if is_spla:
-
             # determine whether there is at least one qualified candidate
             does_exist = False
             size = len(app_list)
@@ -65,13 +58,7 @@ class Efficiency:
                     app_list.pop(candidate_index)
                     # change turn to another organization
                     is_spla = not is_spla
-
-                    # newwwww
-                    best = curr_spla
-                    value_pair = self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, best_pair)
-                    best = max(best, value_pair[0][0])
-                    best_pair = [best, value_pair[0][1]]
-
+                    self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list)
                     # backtracking!!!!
                     is_spla = not is_spla
                     app_list.insert(candidate_index, candidate)
@@ -80,30 +67,17 @@ class Efficiency:
                     week_lahsa = list(temp_week_lahsa)
                     curr_spla = temp_curr_spla
 
-                    # # newwww
-                    # return best_pair, is_spla, app_list, chosen_list, week_spla, week_lahsa, curr_spla
-
             if not does_exist:
                 chosen_list.append("none")
                 is_spla = not is_spla
-
-                # newwwww
-                best = curr_spla
-                value_pair = self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
-                                    chosen_list, best_pair)
-                best = max(best, value_pair[0][0])
-                best_pair = [best, value_pair[0][1]]
-
+                self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
+                                    chosen_list)
                 # backtracking!!!!????
                 is_spla = not is_spla
                 chosen_list.pop(len(chosen_list) - 1)
 
-                # # newwww
-                # return best_pair, is_spla, chosen_list
-
         # LAHSA's turn:
         if not is_spla:
-
             # determine whether there is at least one qualified candidate
             does_exist = False
             size = len(app_list)
@@ -141,14 +115,8 @@ class Efficiency:
                     app_list.pop(candidate_index)
                     # change turn to another organization
                     is_spla = not is_spla
-
-                    # newwww
-                    best = curr_lahsa
-                    value_pair = self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
-                                        chosen_list, best_pair)
-                    best = max(best, value_pair[0][1])
-                    best_pair = [value_pair[0][0], best]
-
+                    self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
+                                        chosen_list)
                     # backtracking!!!!
                     is_spla = not is_spla
                     app_list.insert(candidate_index, candidate)
@@ -157,29 +125,14 @@ class Efficiency:
                     week_spla = list(temp_week_spla)
                     curr_lahsa = temp_curr_lahsa
 
-                    # # newwww
-                    # return best_pair, is_spla, app_list, chosen_list, week_lahsa, week_spla, curr_lahsa
-
             if not does_exist:
                 chosen_list.append("none")
                 is_spla = not is_spla
-
-                # newwwww
-                best = curr_lahsa
-                value_pair = self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
-                                    chosen_list, best_pair)
-                best = max(best, value_pair[0][1])
-                best_pair = [value_pair[0][0], best]
-
-
+                self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla,
+                                    chosen_list)
                 # backtracking!!!!????
                 is_spla = not is_spla
                 chosen_list.pop(len(chosen_list) - 1)
-
-                # # newwww
-                # return best_pair, is_spla, chosen_list
-
-        return best_pair, is_spla, app_list, chosen_list, week_lahsa, week_spla, curr_lahsa
 
     def is_over(self, app_list, chosen_list):
         if len(app_list) == 0:
@@ -242,4 +195,3 @@ with open("input6.txt") as input_file:
 
 with open("output.txt", "w") as output_file:
     output_file.write("rytryt" + "\n")
-
