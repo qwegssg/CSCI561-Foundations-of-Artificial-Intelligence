@@ -5,7 +5,7 @@ class Efficiency:
         is_spla = True
         chosen_list = []
         best_pair = list(self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, [curr_spla, curr_lahsa]))
-        # print(best_pair)
+        print(best_pair)
         return best_pair[2][0][0:5]
 
     def max_efficiency(self, app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, best_pair):
@@ -169,6 +169,10 @@ class Efficiency:
         return False
 
 
+def my_key(x):
+    return x[0:5]
+
+
 with open("input.txt") as input_file:
     lines = input_file.read().splitlines()
     b_lahsa = int(lines[0])
@@ -177,7 +181,7 @@ with open("input.txt") as input_file:
     s_so_far = int(lines[3 + l_so_far])
     total = int(lines[4 + l_so_far + s_so_far])
 
-    # create remaining applicants list, calculate the init state
+    # create remaining applicants list, get the init state
     app_list = []
     spla_set = set()
     lahsa_set = set()
@@ -191,24 +195,25 @@ with open("input.txt") as input_file:
     week_lahsa = [0, 0, 0, 0, 0, 0, 0]
     curr_spla = 0
     curr_lahsa = 0
+    # sort the total list by increasing order of applicant id
+    total_list = list(lines[5 + l_so_far + s_so_far:len(lines)])
+    total_list.sort(key=my_key)
     for index in range(total):
-        applicant = lines[5 + l_so_far + s_so_far + index]
+        applicant = total_list[index]
         if index + 1 in spla_set:
             for i in range(7):
                 if int(applicant[13 + i:14 + i]) == 1:
-                    week_spla[i] += int(applicant[13 + i:14 + i])
+                    week_spla[i] += 1
                     curr_spla = curr_spla + 1
         elif index + 1 in lahsa_set:
             for i in range(7):
                 if int(applicant[13 + i:14 + i]) == 1:
-                    week_lahsa[i] += int(applicant[13 + i:14 + i])
+                    week_lahsa[i] += 1
                     curr_lahsa = curr_lahsa + 1
         else:
             app_list.append(applicant)
-
     efficiency = Efficiency()
     app_id = efficiency.init(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa)
 
 with open("output.txt", "w") as output_file:
     output_file.write(app_id + "\n")
-
