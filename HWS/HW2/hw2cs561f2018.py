@@ -5,7 +5,7 @@ class Efficiency:
         is_spla = True
         chosen_list = []
         best_pair = list(self.max_efficiency(app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, [curr_spla, curr_lahsa]))
-        print(best_pair)
+        # print(best_pair)
         return best_pair[2][0][0:5]
 
     def max_efficiency(self, app_list, week_spla, week_lahsa, curr_spla, curr_lahsa, is_spla, chosen_list, best_pair):
