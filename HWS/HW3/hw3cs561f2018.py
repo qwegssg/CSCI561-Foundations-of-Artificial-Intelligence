@@ -6,10 +6,15 @@ def value_iteration(u_map, r_map, size, exit_x, exit_y):
     epsilon = 0.1
     gamma = 0.9
     # print(u_map)
+    # print(r_map)
     # print(u_map[1, 7])
     # print(u_map[2, 8])
+    # next_u_map = u_map.copy()
     while True:
         delta = 0
+
+        # u_map = next_u_map.copy()
+
         # value iteration: update every state's utility
         for index_y in range(size):
             for index_x in range(size):
@@ -19,11 +24,19 @@ def value_iteration(u_map, r_map, size, exit_x, exit_y):
                 action_utility = next_state(index_y, index_x, u_map, size)
                 # bellman update
                 max_utility = r_map[index_y, index_x] + gamma * np.max(action_utility)
+                # delta: the maximum change in the utility of any state in an iteration
                 delta = max(delta, np.abs(max_utility - u_map[index_y, index_x]))
                 u_map[index_y, index_x] = max_utility
+
+
+                # next_u_map[index_y, index_x] = max_utility
+
+
+
         # terminate condition
         if delta < epsilon * (1 - gamma) / gamma:
             break
+    # print(u_map)
     # generate the corresponding optimal policy
     policy = np.zeros([map_size, map_size])
     for index_y in range(size):
@@ -34,6 +47,7 @@ def value_iteration(u_map, r_map, size, exit_x, exit_y):
                 continue
             # 1: n; 2: s; 3: e; 4: w
             # argmax: get the index of the maximum value
+            # Tie breaking: argmax will return the first occurrence of the index of the maximum value
             policy[index_y, index_x] = np.argmax(next_state(index_y, index_x, u_map, size)) + 1
     return policy
 
@@ -59,7 +73,7 @@ def in_bound(y, x, size):
     return False
 
 
-with open("input1.txt") as input_file:
+with open("input2.txt") as input_file:
     lines = input_file.read().splitlines()
     map_size = int(lines[0])
     car_num = int(lines[1])
@@ -83,15 +97,18 @@ with open("input1.txt") as input_file:
         # init the reward map, hard copy!
         r_map = u_map.copy()
         op_policy = value_iteration(u_map, r_map, map_size, int(coordinate[0]), int(coordinate[1])).copy()
-        print(op_policy)
+        # print(op_policy)
 
         # do simulation
         total = 0
         for j in range(10):
+            # for each round of simulation, initialize the final result, start position
             result = 0
             coordinate = lines[3 + ob_num + index].split(",")
             move_y = int(coordinate[1])
             move_x = int(coordinate[0])
+            # print(move_x)
+            # print(move_y)
             pos = op_policy[move_y, move_x]
             # seed 0 - 9 ????????????
             np.random.seed(j)
@@ -129,7 +146,7 @@ with open("input1.txt") as input_file:
                             else:
                                 move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                         else:
-                            move_7 = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
+                            move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                     else:
                         move_x += 1
                 if pos == 4:
@@ -140,7 +157,7 @@ with open("input1.txt") as input_file:
                             else:
                                 move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                         else:
-                            move_7 = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
+                            move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                     else:
                         move_x -= 1
                 result += r_map[move_y, move_x]
