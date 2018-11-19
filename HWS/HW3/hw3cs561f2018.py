@@ -5,16 +5,10 @@ import numpy as np
 def value_iteration(u_map, r_map, size, exit_x, exit_y):
     epsilon = 0.1
     gamma = 0.9
-    # print(u_map)
-    # print(r_map)
-    # print(u_map[1, 7])
-    # print(u_map[2, 8])
-    # next_u_map = u_map.copy()
+    next_u_map = u_map.copy()
     while True:
         delta = 0
-
-        # u_map = next_u_map.copy()
-
+        u_map = next_u_map.copy()
         # value iteration: update every state's utility
         for index_y in range(size):
             for index_x in range(size):
@@ -26,17 +20,10 @@ def value_iteration(u_map, r_map, size, exit_x, exit_y):
                 max_utility = r_map[index_y, index_x] + gamma * np.max(action_utility)
                 # delta: the maximum change in the utility of any state in an iteration
                 delta = max(delta, np.abs(max_utility - u_map[index_y, index_x]))
-                u_map[index_y, index_x] = max_utility
-
-
-                # next_u_map[index_y, index_x] = max_utility
-
-
-
+                next_u_map[index_y, index_x] = max_utility
         # terminate condition
         if delta < epsilon * (1 - gamma) / gamma:
             break
-    # print(u_map)
     # generate the corresponding optimal policy
     policy = np.zeros([map_size, map_size])
     for index_y in range(size):
@@ -73,7 +60,7 @@ def in_bound(y, x, size):
     return False
 
 
-with open("input2.txt") as input_file:
+with open("input.txt") as input_file:
     lines = input_file.read().splitlines()
     map_size = int(lines[0])
     car_num = int(lines[1])
@@ -86,6 +73,7 @@ with open("input2.txt") as input_file:
     for index in range(ob_num):
         coordinate = lines[3 + index].split(",")
         grid[int(coordinate[0]), int(coordinate[1])] = -101
+    result_list = []
     # deal with the car one by one
     for index in range(car_num):
         grid_map = grid.copy()
@@ -98,7 +86,6 @@ with open("input2.txt") as input_file:
         r_map = u_map.copy()
         op_policy = value_iteration(u_map, r_map, map_size, int(coordinate[0]), int(coordinate[1])).copy()
         # print(op_policy)
-
         # do simulation
         total = 0
         for j in range(10):
@@ -107,10 +94,7 @@ with open("input2.txt") as input_file:
             coordinate = lines[3 + ob_num + index].split(",")
             move_y = int(coordinate[1])
             move_x = int(coordinate[0])
-            # print(move_x)
-            # print(move_y)
             pos = op_policy[move_y, move_x]
-            # seed 0 - 9 ????????????
             np.random.seed(j)
             swerve = np.random.random_sample(1000000)
             k = 0
@@ -122,47 +106,49 @@ with open("input2.txt") as input_file:
                             if swerve[k] > 0.9:
                                 move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                             else:
-                                move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
+                                move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
                         else:
-                            move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
+                            move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
                     else:
-                        move_y -= 1
+                        move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                 if pos == 2:
                     if swerve[k] > 0.7:
                         if swerve[k] > 0.8:
                             if swerve[k] > 0.9:
                                 move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                             else:
-                                move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
+                                move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
                         else:
-                            move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
+                            move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
                     else:
-                        move_y += 1
+                        move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                 if pos == 3:
                     if swerve[k] > 0.7:
                         if swerve[k] > 0.8:
                             if swerve[k] > 0.9:
                                 move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
                             else:
-                                move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
+                                move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                         else:
-                            move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
+                            move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                     else:
-                        move_x += 1
+                        move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
                 if pos == 4:
                     if swerve[k] > 0.7:
                         if swerve[k] > 0.8:
                             if swerve[k] > 0.9:
                                 move_x = move_x + 1 if in_bound(move_y, move_x + 1, map_size) else move_x
                             else:
-                                move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
+                                move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
                         else:
-                            move_y = move_y - 1 if in_bound(move_y - 1, move_x, map_size) else move_y
+                            move_y = move_y + 1 if in_bound(move_y + 1, move_x, map_size) else move_y
                     else:
-                        move_x -= 1
+                        move_x = move_x - 1 if in_bound(move_y, move_x - 1, map_size) else move_x
                 result += r_map[move_y, move_x]
                 pos = op_policy[move_y, move_x]
                 k += 1
             total += result
-            # print(result)
-        print(total / 10.0)
+        result_list.append(int(np.floor(total / 10.0)))
+with open("output.txt", "w") as output_file:
+    for result in result_list:
+        output_file.write(str(result) + "\n")
