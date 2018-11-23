@@ -85,7 +85,7 @@ with open("input.txt") as input_file:
         # init the reward map, hard copy!
         r_map = u_map.copy()
         op_policy = value_iteration(u_map, r_map, map_size, int(coordinate[0]), int(coordinate[1])).copy()
-        # print(op_policy)
+        print(op_policy)
         # do simulation
         total = 0
         for j in range(10):
@@ -149,6 +149,7 @@ with open("input.txt") as input_file:
                 k += 1
             total += result
         result_list.append(int(np.floor(total / 10.0)))
+    print(result_list)
 with open("output.txt", "w") as output_file:
     for result in result_list:
         output_file.write(str(result) + "\n")
